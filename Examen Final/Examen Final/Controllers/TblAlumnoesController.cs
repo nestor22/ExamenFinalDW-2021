@@ -26,6 +26,32 @@ namespace Examen_Final.Controllers
         {
             return await _context.TblAlumnos.ToListAsync();
         }
+        // GET: api/TblAlumnoes/activos
+        [HttpGet("activos")]
+        public async Task<ActionResult<IEnumerable<TblAlumno>>> GetTblAlumnosActivos()
+        {
+            var tblAlumnosActivos = await _context.TblAlumnos.Where(alumno => alumno.Habilitado == true).ToListAsync();
+
+
+            return  tblAlumnosActivos;
+        }
+        // GET: api/TblAlumnoes/Aprobados
+        [HttpGet("Aprobados")]
+        public async Task<ActionResult<IEnumerable<TblAlumno>>> GetTblAlumnosAprobados()
+        {
+            var tblAlumnosActivos = await _context.TblAlumnos.Where(alumno => alumno.Estado == 1).ToListAsync();
+
+
+            return tblAlumnosActivos;
+        }
+        // GET: api/TblAlumnoes/Reprobados
+        [HttpGet("Reprobados")]
+        public async Task<ActionResult<IEnumerable<TblAlumno>>> GetTblAlumnosReprobados()
+        {
+            var tblAlumnosActivos = await _context.TblAlumnos.Where(alumno => alumno.Estado == 0).ToListAsync();
+            return tblAlumnosActivos;
+        }
+
 
         // GET: api/TblAlumnoes/5
         [HttpGet("{id}")]
@@ -103,16 +129,12 @@ namespace Examen_Final.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<TblAlumno>> DeleteTblAlumno(long id)
         {
-            var tblAlumno = await _context.TblAlumnos.FindAsync(id);
-            if (tblAlumno == null)
-            {
-                return NotFound();
-            }
+            TblAlumno Alumno = _context.TblAlumnos.Where(alumno => alumno.Carnet == id).FirstOrDefault();
+            Alumno.Habilitado = false;
 
-            _context.TblAlumnos.Remove(tblAlumno);
             await _context.SaveChangesAsync();
+            return Alumno;
 
-            return tblAlumno;
         }
 
         private bool TblAlumnoExists(long id)
